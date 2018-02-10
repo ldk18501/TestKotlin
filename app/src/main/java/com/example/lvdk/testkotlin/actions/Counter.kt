@@ -1,4 +1,4 @@
-package com.example.lvdk.testkotlin.ActionCreater
+package com.example.lvdk.testkotlin.actions
 
 import com.brianegan.bansa.Action
 

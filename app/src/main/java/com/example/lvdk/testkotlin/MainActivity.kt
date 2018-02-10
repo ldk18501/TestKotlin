@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import com.brianegan.bansa.BaseStore
-import com.example.lvdk.testkotlin.ActionCreater.DECREMENT
-import com.example.lvdk.testkotlin.ActionCreater.INCREMENT
-import com.example.lvdk.testkotlin.ActionCreater.INIT
-import com.example.lvdk.testkotlin.Reducer.reducer
+import com.example.lvdk.testkotlin.actions.DECREMENT
+import com.example.lvdk.testkotlin.actions.INCREMENT
+import com.example.lvdk.testkotlin.actions.INIT
+import com.example.lvdk.testkotlin.reducer.reducer
 import kotlinx.android.synthetic.main.activity_main.*
 
 

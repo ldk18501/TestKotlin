@@ -1,9 +1,9 @@
-package com.example.lvdk.testkotlin.Reducer
+package com.example.lvdk.testkotlin.reducer
 
 import com.brianegan.bansa.Reducer
-import com.example.lvdk.testkotlin.ActionCreater.DECREMENT
-import com.example.lvdk.testkotlin.ActionCreater.INCREMENT
-import com.example.lvdk.testkotlin.ActionCreater.INIT
+import com.example.lvdk.testkotlin.actions.DECREMENT
+import com.example.lvdk.testkotlin.actions.INCREMENT
+import com.example.lvdk.testkotlin.actions.INIT
 import com.example.lvdk.testkotlin.AppState
 
 /**
