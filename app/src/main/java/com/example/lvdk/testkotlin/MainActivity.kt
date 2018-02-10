@@ -3,49 +3,16 @@ package com.example.lvdk.testkotlin
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
-import android.widget.TextView
+import com.brianegan.bansa.BaseStore
+import com.example.lvdk.testkotlin.ActionCreater.DECREMENT
+import com.example.lvdk.testkotlin.ActionCreater.INCREMENT
+import com.example.lvdk.testkotlin.ActionCreater.INIT
+import com.example.lvdk.testkotlin.Reducer.reducer
 import kotlinx.android.synthetic.main.activity_main.*
-import tw.geothings.rekotlin.Action
-import tw.geothings.rekotlin.StateType
-import tw.geothings.rekotlin.Store
-import tw.geothings.rekotlin.StoreSubscriber
 
 
-data class AppState(
-        val counter: Int = 0
-) : StateType
-
-
-data class CounterActionIncrease(val num: Int) : Action
-data class CounterActionDecrease(val num: Int) : Action
-
-private fun counterReducer(action: Action, state: AppState?): AppState {
-    // if no state has been provided, create the default state
-    var state = state ?: AppState()
-
-    when (action) {
-        is CounterActionIncrease -> {
-            state = state.copy(counter = state.counter + action.num)
-        }
-        is CounterActionDecrease -> {
-            state = state.copy(counter = state.counter - action.num)
-        }
-    }
-
-    return state
-}
-
-val mainStore = Store(
-        reducer = ::counterReducer,
-        state = null
-)
-
-
-class MainActivity : AppCompatActivity(), StoreSubscriber<AppState> {
-
-    private val counterLabel: TextView by lazy {
-        txtNumber
-    }
+val counterStore = BaseStore(AppState(), reducer)
+class MainActivity : AppCompatActivity() {
 
     private val buttonUp: Button by lazy {
         btnAdd
@@ -64,23 +31,21 @@ class MainActivity : AppCompatActivity(), StoreSubscriber<AppState> {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        counterStore.dispatch(INIT)
+
         this.buttonUp.setOnClickListener {
-            val num = getInputNumber()
-            mainStore.dispatch(CounterActionIncrease(num))
+            counterStore.dispatch(INCREMENT)
         }
 
         this.buttonDown.setOnClickListener {
-            val num = getInputNumber()
-            mainStore.dispatch(CounterActionDecrease(num))
+            counterStore.dispatch(DECREMENT)
         }
 
-        mainStore.subscribe(this)
+        counterStore.subscribe({
+            txtNumber.text = counterStore.state.counter.toString()
+        })
     }
 
-    override fun newState(state: AppState) {
-        // when the state changes, the UI is updated to reflect the current state
-        this.counterLabel.text = "${state.counter}"
-    }
 }
 
 
