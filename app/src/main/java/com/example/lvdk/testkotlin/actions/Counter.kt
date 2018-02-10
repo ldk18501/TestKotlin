@@ -11,3 +11,6 @@ data class INIT(val initState: AppState = AppState()) : Action
 
 data class INCREMENT(val num: Int) : Action
 data class DECREMENT(val num: Int) : Action
+
+object FETCH_TITLE : Action
+data class SHOW_TITLE(val title: String) : Action

@@ -5,13 +5,15 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import com.brianegan.bansa.BaseStore
 import com.example.lvdk.testkotlin.actions.DECREMENT
+import com.example.lvdk.testkotlin.actions.FETCH_TITLE
 import com.example.lvdk.testkotlin.actions.INCREMENT
 import com.example.lvdk.testkotlin.actions.INIT
+import com.example.lvdk.testkotlin.epics.apiEpic
 import com.example.lvdk.testkotlin.reducer.reducer
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-val counterStore = BaseStore(AppState(), reducer)
+val counterStore = BaseStore(AppState(), reducer, apiEpic)
 class MainActivity : AppCompatActivity() {
 
     private val buttonUp: Button by lazy {
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         counterStore.dispatch(INIT())
+        counterStore.dispatch(FETCH_TITLE)
 
         this.buttonUp.setOnClickListener {
             counterStore.dispatch(INCREMENT(getInputNumber()))
@@ -43,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         counterStore.subscribe({
             txtNumber.text = counterStore.state.counter.toString()
+            txtTitle.text = counterStore.state.title
         })
     }
 
