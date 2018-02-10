@@ -31,14 +31,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        counterStore.dispatch(INIT)
+        counterStore.dispatch(INIT())
 
         this.buttonUp.setOnClickListener {
-            counterStore.dispatch(INCREMENT)
+            counterStore.dispatch(INCREMENT(getInputNumber()))
         }
 
         this.buttonDown.setOnClickListener {
-            counterStore.dispatch(DECREMENT)
+            counterStore.dispatch(DECREMENT(getInputNumber()))
         }
 
         counterStore.subscribe({
