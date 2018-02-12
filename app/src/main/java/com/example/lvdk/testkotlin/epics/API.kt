@@ -1,10 +1,11 @@
 package com.example.lvdk.testkotlin.epics
 
-import com.brianegan.bansa.Middleware
-import com.brianegan.bansaKotlin.invoke
+import com.brianegan.bansa.Action
+import com.brianegan.bansa.Store
 import com.example.lvdk.testkotlin.AppState
 import com.example.lvdk.testkotlin.actions.FETCH_TITLE
 import com.example.lvdk.testkotlin.actions.SHOW_TITLE
+import com.example.lvdk.testkotlin.middlewares.ofActionType
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -16,14 +17,22 @@ import java.io.IOException
 /**
  * Created by LvDK on 2018/2/10.
  */
-val apiEpic = Middleware<AppState> { store, action, next ->
-    when (action) {
-        is FETCH_TITLE -> {
-            getTitle().subscribe({ next(SHOW_TITLE(it.body()?.string()?:"")) }, { println("fetch title error: ${it.message}") })
-        }
-        else -> next(action)
-    }
+val apiEpic = { action: Observable<Action>, store: Store<AppState> ->
+    action.ofActionType(FETCH_TITLE)
+            .map({ _ ->
+                SHOW_TITLE("hehe")
+            })
 }
+
+
+//val apiEpic = Middleware<AppState> { store, action, next ->
+//    when (action) {
+//        is FETCH_TITLE -> {
+//            getTitle().subscribe({ next(SHOW_TITLE(it.body()?.string()?:"")) }, { println("fetch title error: ${it.message}") })
+//        }
+//        else -> next(action)
+//    }
+//}
 
 fun getTitle(): Observable<Response> {
     var request = Request.Builder()
