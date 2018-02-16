@@ -1,10 +1,12 @@
 package com.example.lvdk.testkotlin.middlewares
 
+import android.util.Log
 import com.brianegan.bansa.Action
 import com.brianegan.bansa.Middleware
-import com.brianegan.bansaKotlin.invoke
+import com.brianegan.bansa.NextDispatcher
+import com.brianegan.bansa.Store
 import com.example.lvdk.testkotlin.AppState
-import com.example.lvdk.testkotlin.epics.mergedEpics
+import com.example.lvdk.testkotlin.epics.epics
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
@@ -12,21 +14,30 @@ import io.reactivex.subjects.PublishSubject
  * Created by LvDK on 2018/2/12.
  */
 
-val epicMiddleware = Middleware<AppState> { store, action, next ->
-    val actionObservable: PublishSubject<Action> = PublishSubject.create()
-    val actions = mergedEpics.map { epic->epic(actionObservable, store) }
+object EpicMiddleware : Middleware<AppState> {
+    val inputs: PublishSubject<Action> = PublishSubject.create()
 
-    val combinedActions = Observable.merge(actions).publish()
-    combinedActions.subscribe(actionObservable)
-    combinedActions.subscribe({action -> store.dispatch(action)})
-    combinedActions.connect()
-    next(action)
-    actionObservable.onNext(action)
+    override fun dispatch(store: Store<AppState>, action: Action, next: NextDispatcher) {
+        Log.e("TestKotlin_mw", store.state.toString() + " " + action.javaClass.simpleName)
+
+        val actions = epics.map { epic -> epic(inputs, store) }
+
+        val combinedActions = Observable.merge(actions).publish()
+        combinedActions.subscribe(inputs)
+        combinedActions.subscribe({ action -> run {
+            Log.e("TestKotlin_sd", store.state.toString())
+            store.dispatch(action)
+        }})
+        combinedActions.connect()
+
+        next.dispatch(action)
+        inputs.onNext(action)
+    }
 }
 
-
-fun Observable<Action>.ofActionType(type: Action) : Observable<Action> {
+fun Observable<Action>.ofActionType(type: Action): Observable<Action> {
     return this.filter({ i ->
-        i::class.java == type::class.java
+        Log.e("TestKotlin_actType", i::class.java.simpleName + " vs " + type::class.java.simpleName)
+        i::class.java.simpleName == type::class.java.simpleName
     })
 }

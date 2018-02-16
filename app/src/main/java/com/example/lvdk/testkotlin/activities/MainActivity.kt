@@ -1,8 +1,10 @@
 package com.example.lvdk.testkotlin.activities
 
 import android.os.Bundle
+import android.util.Log
 import com.example.lvdk.testkotlin.R
 import com.example.lvdk.testkotlin.actions.DECREMENT
+import com.example.lvdk.testkotlin.actions.FETCHTITLE
 import com.example.lvdk.testkotlin.actions.INCREMENT
 import com.example.lvdk.testkotlin.counterStore
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,6 +21,12 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        counterStore.subscribe({
+            Log.e("TestKotlin_state", counterStore.state.toString())
+            txtNumber.text = counterStore.state.counter.toString()
+            txtTitle.text = counterStore.state.title
+        })
+
         btnAdd.setOnClickListener {
             counterStore.dispatch(INCREMENT(getInputNumber()))
         }
@@ -27,10 +35,7 @@ class MainActivity : BaseActivity() {
             counterStore.dispatch(DECREMENT(getInputNumber()))
         }
 
-        counterStore.subscribe({
-            txtNumber.text = counterStore.state.counter.toString()
-            txtTitle.text = counterStore.state.title
-        })
+        counterStore.dispatch(FETCHTITLE)
     }
 
 }
