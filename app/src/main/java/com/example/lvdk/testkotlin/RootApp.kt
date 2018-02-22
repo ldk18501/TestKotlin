@@ -7,6 +7,8 @@ import com.brianegan.bansa.BaseStore
 import com.example.lvdk.testkotlin.middlewares.EpicMiddleware
 import com.example.lvdk.testkotlin.reducers.countReducer
 import com.example.lvdk.testkotlin.reducers.titleReducer
+import io.realm.Realm
+import io.realm.RealmConfiguration
 
 /**
  * Created by LvDK on 2018/2/12.
@@ -17,5 +19,12 @@ class RootApp : Application(){
     override fun onCreate() {
         super.onCreate()
         Log.d("TestKotlin_appCreated", "app create")
+
+        Realm.init(this)
+        val conf : RealmConfiguration = RealmConfiguration.Builder()
+                .name("myFirstRealm.realm")
+                .build()
+        Realm.setDefaultConfiguration(conf)
+
     }
 }

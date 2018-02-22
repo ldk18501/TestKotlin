@@ -24,10 +24,12 @@ object EpicMiddleware : Middleware<AppState> {
 
         val combinedActions = Observable.merge(actions).publish()
         combinedActions.subscribe(inputs)
-        combinedActions.subscribe({ action -> run {
-            Log.e("TestKotlin_sd", store.state.toString())
-            store.dispatch(action)
-        }})
+        combinedActions.subscribe({ action: Action ->
+            run {
+                Log.e("TestKotlin_sd", store.state.toString())
+                store.dispatch(action)
+            }
+        })
         combinedActions.connect()
 
         next.dispatch(action)
@@ -35,9 +37,9 @@ object EpicMiddleware : Middleware<AppState> {
     }
 }
 
-fun Observable<Action>.ofActionType(type: Action): Observable<Action> {
+fun Observable<Action>.ofActionType(typename: String): Observable<Action> {
     return this.filter({ i ->
-        Log.e("TestKotlin_actType", i::class.java.simpleName + " vs " + type::class.java.simpleName)
-        i::class.java.simpleName == type::class.java.simpleName
+        //Log.e("TestKotlin_actType", i::class.java.simpleName + " vs " + type::class.java.simpleName)
+        i::class.java.simpleName == typename
     })
 }
