@@ -23,15 +23,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 /**
  * Created by LvDK on 2018/2/10.
  */
-val gson: Gson = GsonBuilder().setExclusionStrategies(object : ExclusionStrategy {
-    override fun shouldSkipField(f: FieldAttributes): Boolean {
-        return f.declaringClass == RealmObject::class.java
-    }
-
-    override fun shouldSkipClass(clazz: Class<*>): Boolean {
-        return false
-    }
-}).create()
 
 val apiEpic = { action: Observable<Action>, store: Store<AppState> ->
     action.ofActionType(FETCHTITLE::class.java.simpleName)
@@ -47,6 +38,16 @@ val apiEpic = { action: Observable<Action>, store: Store<AppState> ->
                         .observeOn(AndroidSchedulers.mainThread())
             }).map({ user -> SHOWTITLE(user.avatarUrl ?: "") })
 }
+
+val gson: Gson = GsonBuilder().setExclusionStrategies(object : ExclusionStrategy {
+    override fun shouldSkipField(f: FieldAttributes): Boolean {
+        return f.declaringClass == RealmObject::class.java
+    }
+
+    override fun shouldSkipClass(clazz: Class<*>): Boolean {
+        return false
+    }
+}).create()
 
 //            .map({ action ->
 //                if (action is FETCHTITLE)
