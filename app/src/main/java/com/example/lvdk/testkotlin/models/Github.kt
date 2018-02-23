@@ -21,7 +21,7 @@ open class Github : RealmObject() {
     @Expose
     open var avatarUrl: String? = null
 
-    @SerializedName("name")
+    @SerializedName("login")
     @Expose
     open var name: String? = null
 

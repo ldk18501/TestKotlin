@@ -4,7 +4,7 @@ import com.brianegan.bansa.Action
 import com.brianegan.bansa.Store
 import com.example.lvdk.testkotlin.AppState
 import com.example.lvdk.testkotlin.actions.FETCHTITLE
-import com.example.lvdk.testkotlin.actions.SHOWTITLE
+import com.example.lvdk.testkotlin.actions.STORETOREALM
 import com.example.lvdk.testkotlin.middlewares.ofActionType
 import com.example.lvdk.testkotlin.services.GithubService
 import com.google.gson.ExclusionStrategy
@@ -36,7 +36,7 @@ val apiEpic = { action: Observable<Action>, store: Store<AppState> ->
                         .getGithubUser(action.param)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-            }).map({ user -> SHOWTITLE(user.avatarUrl ?: "") })
+            }).map({ user -> STORETOREALM(user) })
 }
 
 val gson: Gson = GsonBuilder().setExclusionStrategies(object : ExclusionStrategy {

@@ -3,9 +3,10 @@ package com.example.lvdk.testkotlin.epics
 import com.brianegan.bansa.Action
 import com.brianegan.bansa.Store
 import com.example.lvdk.testkotlin.AppState
-import com.example.lvdk.testkotlin.actions.NOTHING
+import com.example.lvdk.testkotlin.actions.SHOWTITLE
 import com.example.lvdk.testkotlin.actions.STORETOREALM
 import com.example.lvdk.testkotlin.middlewares.ofActionType
+import com.example.lvdk.testkotlin.models.Github
 import io.reactivex.Observable
 import io.realm.Realm
 
@@ -17,7 +18,8 @@ val storageEpic = { action: Observable<Action>, store: Store<AppState> ->
             .map({ action ->
                 val realmInstance = Realm.getDefaultInstance()
                 realmInstance.beginTransaction()
-                realmInstance.copyToRealmOrUpdate((action as STORETOREALM).obj)
+                realmInstance.copyToRealmOrUpdate(((action as STORETOREALM).obj as Github))
                 realmInstance.commitTransaction()
-            }).map({ _ -> NOTHING() })
+                SHOWTITLE((action.obj as Github).avatarUrl?:"")
+            })
 }
