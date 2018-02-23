@@ -5,14 +5,21 @@ import android.os.Bundle
 import android.util.Log
 import com.brianegan.bansa.Subscription
 import com.example.lvdk.testkotlin.R
-import com.example.lvdk.testkotlin.actions.DECREMENT
-import com.example.lvdk.testkotlin.actions.FETCHTITLE
-import com.example.lvdk.testkotlin.actions.INCREMENT
-import com.example.lvdk.testkotlin.actions.SHOWTITLE
+import com.example.lvdk.testkotlin.actions.Decrement
+import com.example.lvdk.testkotlin.actions.Increment
+import com.example.lvdk.testkotlin.actions.SetTitle
+import com.example.lvdk.testkotlin.actions.StoreToRealm
 import com.example.lvdk.testkotlin.counterStore
+import com.example.lvdk.testkotlin.gson
 import com.example.lvdk.testkotlin.models.Github
+import com.example.lvdk.testkotlin.services.GithubService
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.properties.Delegates
 
 
@@ -36,22 +43,37 @@ class MainActivity : BaseActivity() {
             txtTitle.text = counterStore.state.title
         })
 
+        //从realm取数据
         val savedUser: Github? = myRealm.where(Github::class.java).findFirst()
-        counterStore.dispatch(SHOWTITLE(savedUser?.name?:""))
+        counterStore.dispatch(SetTitle(savedUser?.name ?: ""))
 
         btnAdd.setOnClickListener {
-            counterStore.dispatch(INCREMENT(getInputNumber()))
+            counterStore.dispatch(Increment(getInputNumber()))
         }
 
         btnMinus.setOnClickListener {
-            counterStore.dispatch(DECREMENT(getInputNumber()))
+            counterStore.dispatch(Decrement(getInputNumber()))
         }
 
         btnNext.setOnClickListener {
             startActivity(Intent(this, TestRealmActivity::class.java))
         }
 
-        counterStore.dispatch(FETCHTITLE("https://api.github.com/", "ldk18501"))
+        // http
+        Retrofit.Builder()
+                .baseUrl("https://api.github.com/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
+                .create(GithubService::class.java)
+                .getGithubUser("ldk18501")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    counterStore.dispatch(StoreToRealm(it, SetTitle(it.avatarUrl ?: "")))
+                }, { error ->
+                    Log.e("RetrofitError", error.message)
+                })
     }
 
     override fun onDestroy() {

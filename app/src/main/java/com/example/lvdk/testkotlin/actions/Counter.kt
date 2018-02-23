@@ -6,17 +6,10 @@ import io.realm.RealmObject
 /**
  * Created by LvDK on 2018/2/10.
  */
-interface ActionType
 
-data class INCREMENT(val num: Int) : Action
-data class DECREMENT(val num: Int) : Action
+data class Increment(val num: Int) : Action
+data class Decrement(val num: Int) : Action
 
-data class FETCHTITLE(
-        val url: String,
-        val param: String
-) : Action
+data class SetTitle(val title: String) : Action
 
-data class SHOWTITLE(val title: String) : Action
-
-data class STORETOREALM(val obj: RealmObject) : Action
-class NOTHING : Action
+data class StoreToRealm(val obj: RealmObject, val actionToDo: Action) : Action

@@ -18,7 +18,7 @@ object EpicMiddleware : Middleware<AppState> {
     val inputs: PublishSubject<Action> = PublishSubject.create()
 
     override fun dispatch(store: Store<AppState>, action: Action, next: NextDispatcher) {
-        Log.e("TestKotlin_mw", store.state.toString() + " " + action.javaClass.simpleName)
+        //Log.e("TestKotlin_mw", store.state.toString() + " " + action.javaClass.simpleName)
 
         val actions = epics.map { epic -> epic(inputs, store) }
 
